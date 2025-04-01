@@ -22,4 +22,4 @@ jobs:
           gh release create "$tag" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes
+              -F "${GITHUB_REPOSITORY}/releaseNotesContent.txt"
