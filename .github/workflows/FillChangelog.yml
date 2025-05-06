@@ -44,7 +44,6 @@ jobs:
         echo "###Link to Commit - $URL" >> ./ReleaseNotes.txt
 
     - name: Commit the changes in ReleaseNotes.md
-      uses: actions/github-script@v7
       run: |
         git add .
         git commit \
