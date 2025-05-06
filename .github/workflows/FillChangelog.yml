@@ -1,0 +1,74 @@
+name: Fill meta data for this release
+
+on:
+	push:
+		branches:
+			- 'main'
+
+jobs:
+	create-releaseNotes:
+		runs-on: [self-hosted, Linux]
+
+		steps:
+		  - name: Checkout
+		    uses: actions/checkout@v2
+  
+      - name: Create branch name and PR body
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          BRANCH_NAME=releaseNotes/$DATE
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "REV=$REV" >> $GITHUB_ENV
+          {
+             echo "PR_BODY<<EOF"
+             echo "Adding an entry to release notes."
+             echo "pr - ${{  github.event.commits[0][url] }}"
+             echo "EOF"
+          } >> $GITHUB_ENV
+      
+      - name: Create a branch for adding entry to release notes.
+        run: |
+          git branch -D $BRANCH_NAME &> /dev/null || true
+          git checkout -b $BRANCH_NAME -t origin/main
+          
+		  - name: Add the entry to Release
+		    env:
+		  		AUTHOR: ${{ github.event.commits[0][author] }}
+		  		MESSAGE: ${{ github.event.commits[0][message] }}
+		  		URL: ${{  github.event.commits[0][url] }}
+		    run: |
+          if [ -f ./ReleaseNotes.md ]; then
+            echo "#Release Notes" > ./ReleaseNotes.txt
+          fi
+          echo "-----------------" >> ./ReleaseNotes.txt
+          echo "###Author -  $AUTHOR" >> ./ReleaseNotes.txt
+          echo "###CommitMessage - $MESSAGE" >> ./ReleaseNotes.txt
+          echo "###Link to Commit - $URL" >> ./ReleaseNotes.txt
+  
+  
+      - name: Commit the changes in ReleaseNotes.md
+        uses: actions/github-script@v7
+        with: 
+          run: |
+            git add .
+            git commit \
+            -m "[auto branch merge] Added entry to release notes ${{  github.sha }}" \
+            -m "$PR_BODY"
+  
+            git push origin $BRANCH_NAME
+      
+      - name: Create pull request to merge the changes to main
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.IGCBOT_TOKEN }}
+            script: |
+              const { data: pullRequest } = await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: "[auto branch merge] Added entry to release notes ${{  github.sha }}",
+                head: context.repo.owner + ":${{ env.BRANCH_NAME }}",
+                base: "main",
+                body: `${{ env.PR_BODY }}`
+              })
+              core.setOutput("pr_number", pullRequest.number)   
+  
