@@ -59,4 +59,5 @@ jobs:
         git commit \
         -m "[auto branch merge] Added entry to release notes ${{  github.sha }}" \
         -m "$PR_BODY"
+        git remote set-url origin https://${{ secrets.IGCBOT_TOKEN }}@github.com/buppalapSrr/TestingReleaseNotes.git
         git push origin $BRANCH_NAME 
