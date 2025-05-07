@@ -6,7 +6,7 @@ on:
 jobs:
   create-releaseNotes:
     name: addEntry to releaseNotes
-    runs-on: [ self-hosted, Linux ]
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout
       uses: actions/checkout@v2
