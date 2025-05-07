@@ -10,18 +10,21 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Create branch name and PR body
       run: |
+        echo "Entered 2nd step"
         DATE=$(date +%Y-%m-%d)
         BRANCH_NAME=releaseNotes/$DATE
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-        echo "REV=$REV" >> $GITHUB_ENV
         {
            echo "PR_BODY<<EOF"
            echo "Adding an entry to release notes."
            echo "pr - ${{  github.event.head_commit.url }}"
            echo "EOF"
         } >> $GITHUB_ENV
+        echo "Branch name is $BRANCH_NAME"
+        echo "Message is "$PR_BODY"
 
     - name: Create a branch for adding entry to release notes
       run: |
