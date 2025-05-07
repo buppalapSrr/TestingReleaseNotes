@@ -11,6 +11,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Config git
+      run: |
+        git config --global user.email "bala.bhuvan.varma.uppalapu@intel.com"
+        git config --global user.name "buppalapSrr"
     - name: Create branch name and PR body
       run: |
         echo "Entered 2nd step"
@@ -37,7 +41,7 @@ jobs:
         URL: ${{  github.event.head_commit.url }}
 
       run: |
-        if [ -f ./ReleaseNotes.md ]; then
+        if [ -f ./ReleaseNotes.txt ]; then
           echo "#Release Notes" > ./ReleaseNotes.txt
         fi
         echo "-----------------" >> ./ReleaseNotes.txt
