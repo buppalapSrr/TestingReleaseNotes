@@ -57,18 +57,3 @@ jobs:
         -m "[auto branch merge] Added entry to release notes ${{  github.sha }}" \
         -m "$PR_BODY"
         git push origin $BRANCH_NAME 
-
-    - name: Create pull request to merge the changes to main
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.IGCBOT_TOKEN }}
-        script: |
-          const { data: pullRequest } = await github.rest.pulls.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: "[auto branch merge] Added entry to release notes ${{  github.sha }}",
-            head: context.repo.owner + ":${{ env.BRANCH_NAME }}",
-            base: "main",
-            body: `${{ env.PR_BODY }}`
-          })
-          core.setOutput("pr_number", pullRequest.number)
