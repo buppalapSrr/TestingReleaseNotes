@@ -8,6 +8,10 @@ jobs:
     name: addEntry to releaseNotes
     runs-on: ubuntu-22.04
     steps:
+    - name: Helper
+      run: |
+        echo "Helper"
+
     - name: Checkout
       uses: actions/checkout@v2
 
